@@ -1,0 +1,38 @@
+
+---
+- name: Create AWS ES2 SecurityGroup
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    region            : us-west-1                                   # Name of Region
+    securiry_group    : LinuxDefault                                # Name for SecurityGroup
+    aws_access_key    : AKIAIE7CO5D5266YNTTA                        # Credentials to Create AWS EC2
+    aws_secret_key    : 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    # Credentials to Create AWS EC2
+
+  tasks:
+    - name: Create a securiry group with Port 22 and 80 open to  0.0.0.0/0
+      ec2_group:
+        name            : "{{ securiry_group }}"
+        description     : Security Group For Linux Server With port 22,88,443 Open
+        region          : "{{ region }}"
+        rules:
+          - proto       : tcp
+            from_port   : 22
+            to_port     : 22
+            cidr_ip     : 194.84.30.0/24
+          - proto       : tcp
+            from_port   : 80
+            to_port     : 80
+            cidr_ip     : 0.0.0.0/0
+          - proto       : tcp
+            from_port   : 443
+            to_port     : 443
+            cidr_ip     : 0.0.0.0/0
+        rules_egress:
+          - proto       : all
+            cidr_ip     : 0.0.0.0/0
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        

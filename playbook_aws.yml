@@ -1,0 +1,39 @@
+
+---
+- name: Create AWS ES2 Instance
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  
+  vars:
+    keypair           : saprykin_aws_key                            # Name of KeyPain as written in AWS Console
+    instance_type     : t2.micro                                    # Type of EC2 Server to Create
+    image             : ami-0ec6517f6edbf8044                       # AMI of Server in This Region 
+    region            : us-west-1                                   # Name of Region
+    count             : 1                                           # How many Servers to Create
+    securiry_group    : LinuxDefault                                # Name for SecurityGroup
+    aws_access_key    : AKIAIE7CO5D5266YNTTA                        # Credentials to Create AWS EC2
+    aws_secret_key    : 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    # Credentials to Create AWS EC2
+  
+
+  tasks:      
+    - name: Create New AWS EC2 Server
+      ec2:
+        key_name        : "{{ keypair }}"
+        instance_type   : "{{ instance_type }}"
+        image           : "{{ image }}"
+        group           : "{{ securiry_group }}"
+        region          : "{{ region }}"
+        instance_tags:
+          Name: Ansible-Client
+          Type: AnsibleEC2-Saprykin
+        count           : "{{ count }}"
+        wait            : true
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+      register: ec2                             # Start Creation of AWS EC2 Server
+      
+    - name: Print all ec2 variables
+      debug:
+        var=ec2
+        
